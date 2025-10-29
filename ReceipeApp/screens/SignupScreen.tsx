@@ -142,7 +142,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "bold",
   },
-  switchText: {
+  switchText: { 
     textAlign: "center",
     color: "#555",
     marginTop: 10,
