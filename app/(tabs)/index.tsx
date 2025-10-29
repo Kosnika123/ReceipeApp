@@ -48,9 +48,9 @@ export default function HomeScreen() {
   const tintColor = useThemeColor({}, "tint");
 
   const featuredImages = [
-    "https://www.themealdb.com/images/media/meals/wvpsxx1468256321.jpg",
-    "https://www.themealdb.com/images/media/meals/ustsqw1468250014.jpg",
-    "https://www.themealdb.com/images/media/meals/xvsurr1511719182.jpg",
+    "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=800&h=400",
+    "https://images.unsplash.com/photo-1509722747041-616f39b57569?w=800&h=400",
+    "https://images.unsplash.com/photo-1484723091739-30a097e8f929?w=800&h=400",
   ];
 
   // Fetch recipes from Supabase
@@ -72,13 +72,13 @@ export default function HomeScreen() {
       setFilteredRecipes(data || []);
 
       // Collect all categories dynamically from data
-      const uniqueCategories = Array.from(
-        new Set(data?.map((r: any) => r.category).filter(Boolean))
-      );
+const uniqueCategories = Array.from(
+  new Set(data?.map((r: any) => r.cartegory).filter(Boolean)) // ✅ fixed here
+);
       const allCategories = Array.from(
         new Set([
           "All",
-          "Starters",
+          "Starter",
           "Dessert",
           "Vegetarian",
           "Seafood",
@@ -124,14 +124,15 @@ export default function HomeScreen() {
       const searchLower = search.trim().toLowerCase();
       const selectedLower = selectedCategory.toLowerCase();
 
-      const filtered = recipes.filter((item) => {
-        const matchesSearch =
-          !searchLower || item.title?.toLowerCase().includes(searchLower);
-        const matchesCategory =
-          selectedLower === "all" ||
-          item.category?.toLowerCase() === selectedLower;
-        return matchesSearch && matchesCategory;
-      });
+ const filtered = recipes.filter((item) => {
+  const matchesSearch =
+    !searchLower || item.title?.toLowerCase().includes(searchLower);
+  const matchesCategory =
+    selectedLower === "all" ||
+    item.cartegory?.toLowerCase() === selectedLower; // ✅ fixed here
+  return matchesSearch && matchesCategory;
+});
+
 
       setFilteredRecipes(filtered);
     }, 250);
