@@ -29,15 +29,19 @@ export default function HomeScreen() {
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [categories, setCategories] = useState<string[]>([
     "All",
-    "African",
-    "Intercontinental",
-    "Seafood",
-    "Vegetarian",
+    "Starters",
     "Dessert",
+    "Vegetarian",
+    "Seafood",
+    "Chicken",
+    "Lamb",
+    "Vegan",
+    "Miscellaneous",
   ]);
   const [featuredIndex, setFeaturedIndex] = useState(0);
   const fadeAnim = new Animated.Value(1);
-  const searchTimeout = useRef<NodeJS.Timeout | null>(null);
+  // const searchTimeout = useRef<NodeJS.Timeout | null>(null);
+  const searchTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const backgroundColor = useThemeColor({}, "background");
   const textColor = useThemeColor({}, "text");
@@ -49,7 +53,7 @@ export default function HomeScreen() {
     "https://www.themealdb.com/images/media/meals/xvsurr1511719182.jpg",
   ];
 
-  // Fetch recipes
+  // Fetch recipes from Supabase
   useEffect(() => {
     fetchRecipes();
   }, []);
@@ -61,16 +65,29 @@ export default function HomeScreen() {
       .select("*")
       .order("id", { ascending: true });
 
-    if (error) console.error("❌ Supabase Error:", error);
-    else {
+    if (error) {
+      console.error("❌ Supabase Error:", error);
+    } else {
       setRecipes(data || []);
       setFilteredRecipes(data || []);
 
+      // Collect all categories dynamically from data
       const uniqueCategories = Array.from(
         new Set(data?.map((r: any) => r.category).filter(Boolean))
       );
       const allCategories = Array.from(
-        new Set(["All", "Seafood", "Vegetarian", "Dessert", ...uniqueCategories])
+        new Set([
+          "All",
+          "Starters",
+          "Dessert",
+          "Vegetarian",
+          "Seafood",
+          "Chicken",
+          "Lamb",
+          "Vegan",
+          "Miscellaneous",
+          ...uniqueCategories,
+        ])
       );
       setCategories(allCategories);
     }
@@ -97,11 +114,35 @@ export default function HomeScreen() {
     return () => clearInterval(interval);
   }, []);
 
-  // Handle search + category filter with debounce
- 
+  // ✅ Fixed filtering logic with debounce and cleanup
+  useEffect(() => {
+    if (!recipes.length) return;
+
+    if (searchTimeout.current) clearTimeout(searchTimeout.current);
+
+    searchTimeout.current = setTimeout(() => {
+      const searchLower = search.trim().toLowerCase();
+      const selectedLower = selectedCategory.toLowerCase();
+
+      const filtered = recipes.filter((item) => {
+        const matchesSearch =
+          !searchLower || item.title?.toLowerCase().includes(searchLower);
+        const matchesCategory =
+          selectedLower === "all" ||
+          item.category?.toLowerCase() === selectedLower;
+        return matchesSearch && matchesCategory;
+      });
+
+      setFilteredRecipes(filtered);
+    }, 250);
+
+    return () => {
+      if (searchTimeout.current) clearTimeout(searchTimeout.current);
+    };
+  }, [search, selectedCategory, recipes]);
 
   const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor, padding: 16 },
+    container: { flex: 1, backgroundColor, padding: 16, fontFamily: "serif" },
     header: {
       marginBottom: 16,
       flexDirection: "row",
@@ -125,33 +166,37 @@ export default function HomeScreen() {
       position: "absolute",
       bottom: 10,
       left: 10,
-      backgroundColor: "rgba(0,0,0,0.5)",
+      backgroundColor: "#CC5500",
       paddingHorizontal: 10,
       paddingVertical: 6,
       borderRadius: 12,
+      marginBottom: 17,
+      marginStart: 66,
     },
-    overlayText: { color: "#fff", fontSize: 16, fontWeight: "600" },
+    overlayText: { color: "#000000ff", fontSize: 16, fontWeight: "600" },
+
     searchContainer: {
       flexDirection: "row",
       alignItems: "center",
       borderWidth: 1.5,
-      borderColor: tintColor,
-      borderRadius: 25,
+      borderColor: "#CC5500",
+      borderRadius: 21,
+      padding: 5,
       paddingHorizontal: 10,
       marginVertical: 10,
     },
-    searchInput: { flex: 1, paddingVertical: 8, color: textColor },
+    searchInput: { flex: 1, paddingVertical: 8, color: textColor},
     categoriesContainer: { marginVertical: 10 },
     categoryButton: {
       paddingHorizontal: 16,
       paddingVertical: 8,
       marginRight: 8,
       borderRadius: 20,
-      backgroundColor: backgroundColor === "#fff" ? "#f0f0f0" : "#333",
+      backgroundColor: backgroundColor === "#fff" ? "#f0f0f0" : "#CC5500",
     },
     selectedCategory: { backgroundColor: tintColor },
     categoryText: { fontSize: 14, color: textColor },
-    selectedCategoryText: { color: "#000" },
+    selectedCategoryText: { color: "#000000ff" },
     grid: {
       flexDirection: "row",
       flexWrap: "wrap",
@@ -234,7 +279,10 @@ export default function HomeScreen() {
                 styles.categoryButton,
                 selectedCategory === cat && styles.selectedCategory,
               ]}
-              onPress={() => setSelectedCategory(cat)}
+              onPress={() => {
+                setSelectedCategory(cat);
+                setSearch(""); // clears search when changing category
+              }}
             >
               <ThemedText
                 style={[
@@ -252,7 +300,11 @@ export default function HomeScreen() {
       {/* Recipes Grid */}
       <ThemedView>
         {loading ? (
-          <ActivityIndicator size="large" color={tintColor} style={{ marginTop: 20 }} />
+          <ActivityIndicator
+            size="large"
+            color={tintColor}
+            style={{ marginTop: 20 }}
+          />
         ) : (
           <View style={styles.grid}>
             {filteredRecipes.map((item) => (

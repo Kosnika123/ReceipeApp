@@ -6,12 +6,19 @@ import { useThemeColor } from "../../hooks/use-theme-color";
 export default function TabLayout() {
   const tintColor = useThemeColor({}, "tint");
   const textColor = useThemeColor({}, "text");
+  const background = useThemeColor({}, "background");
+  const headerBg = "#CC5500"; // change to any color or use `background`
 
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: tintColor,
-        tabBarInactiveTintColor: textColor,
+        tabBarActiveTintColor: "Orange",
+        tabBarInactiveTintColor: "white",
+        tabBarStyle: { backgroundColor: headerBg },
+        headerShown: true, // remove the top title/header bar
+        // headerShown: true,
+        headerStyle: { backgroundColor: headerBg },
+        // headerTintColor: "#fff", // title/icon color
         tabBarButton: HapticTab,
       }}
     >
