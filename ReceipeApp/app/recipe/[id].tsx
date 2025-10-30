@@ -5,6 +5,9 @@ import {
   ScrollView,
   ActivityIndicator,
   StyleSheet,
+  Text,
+  Linking,
+  Alert,
 } from "react-native";
 import { useLocalSearchParams } from "expo-router";
 import { supabase } from "../../lib/supabase";
@@ -13,15 +16,29 @@ import { ThemedView } from "../../components/themed-view";
 import { useThemeColor } from "../../hooks/use-theme-color";
 import { Video } from "expo-av";
 import { WebView } from "react-native-webview";
+import { Rating } from "react-native-ratings";
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withSpring,
+  withSequence,
+} from "react-native-reanimated";
 
 export default function RecipeDetail() {
   const { id } = useLocalSearchParams();
   const [recipe, setRecipe] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [rating, setRating] = useState<number>(0);
 
   const backgroundColor = useThemeColor({}, "background");
   const textColor = useThemeColor({}, "text");
   const tintColor = useThemeColor({}, "tint");
+
+  // ✅ Hooks must be outside conditionals
+  const scale = useSharedValue(1);
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scale.value }],
+  }));
 
   useEffect(() => {
     const fetchRecipe = async () => {
@@ -32,12 +49,48 @@ export default function RecipeDetail() {
         .single();
 
       if (error) console.error(error);
-      else setRecipe(data);
+      else {
+        setRecipe(data);
+        setRating(data.rating || 0);
+      }
       setLoading(false);
     };
 
     if (id) fetchRecipe();
   }, [id]);
+
+  const getYouTubeEmbedUrl = (url: string): string => {
+    try {
+      if (url.includes("youtube.com/watch?v=")) {
+        const videoId = url.split("watch?v=")[1].split("&")[0];
+        return `https://www.youtube.com/embed/${videoId}`;
+      } else if (url.includes("youtu.be/")) {
+        const videoId = url.split("youtu.be/")[1].split("?")[0];
+        return `https://www.youtube.com/embed/${videoId}`;
+      }
+    } catch (error) {
+      console.warn("Invalid YouTube URL:", url);
+    }
+    return url;
+  };
+
+  const handleRatingCompleted = async (value: number) => {
+    setRating(value);
+    const { error } = await supabase
+      .from("receipes")
+      .update({ rating: value })
+      .eq("id", id);
+
+    if (error) console.error("Error updating rating:", error);
+
+    if (value === 5) {
+      scale.value = withSequence(
+        withSpring(1.2, { damping: 2, stiffness: 100 }),
+        withSpring(1, { damping: 2, stiffness: 100 })
+      );
+      Alert.alert("Thank you!", "You gave this recipe a perfect 5-star rating!");
+    }
+  };
 
   if (loading) {
     return (
@@ -55,7 +108,6 @@ export default function RecipeDetail() {
     );
   }
 
-  // Format instructions with clearer spacing (split by line breaks or periods)
   const formattedInstructions = recipe.instructions
     ? recipe.instructions
         .split(/\r?\n|(?<=\.)\s+/)
@@ -69,21 +121,28 @@ export default function RecipeDetail() {
   return (
     <ThemedView style={styles.container}>
       <ScrollView showsVerticalScrollIndicator={false}>
-        {/* Recipe Image */}
         <Image source={{ uri: recipe.image_url }} style={styles.image} />
 
-        {/* Video Section */}
         {recipe.video_url ? (
           <ThemedView style={styles.videoContainer}>
             {recipe.video_url.includes("youtube.com") ||
             recipe.video_url.includes("youtu.be") ? (
-              <WebView
-                style={styles.webview}
-                source={{
-                  uri: recipe.video_url.replace("watch?v=", "embed/"),
-                }}
-                allowsFullscreenVideo
-              />
+              <>
+                <WebView
+                  style={styles.webview}
+                  source={{ uri: getYouTubeEmbedUrl(recipe.video_url) }}
+                  allowsFullscreenVideo
+                />
+                <ThemedText style={{ textAlign: "center", marginTop: 8 }}>
+                  Can't see the video?{" "}
+                  <Text
+                    style={{ color: tintColor }}
+                    onPress={() => Linking.openURL(recipe.video_url)}
+                  >
+                    Watch on YouTube
+                  </Text>
+                </ThemedText>
+              </>
             ) : (
               <Video
                 source={{ uri: recipe.video_url }}
@@ -94,18 +153,33 @@ export default function RecipeDetail() {
           </ThemedView>
         ) : null}
 
-        {/* Recipe Title */}
         <ThemedText type="title" style={styles.title}>
           {recipe.title}
         </ThemedText>
 
-        {/* Ingredients */}
+        {/* Rating Section */}
         <ThemedText type="subtitle" style={styles.sectionTitle}>
-          Ingredients
+          Rating
         </ThemedText>
-        <ThemedText style={styles.text}>
-          {recipe.ingredients}
-        </ThemedText>
+        <Animated.View style={animatedStyle}>
+          <Rating
+            type="star"
+            ratingCount={5}
+            imageSize={40}
+            startingValue={rating}
+            showRating={false}
+            onFinishRating={handleRatingCompleted}
+            tintColor={backgroundColor}
+            ratingColor="#eaff03ff"
+            ratingBackgroundColor="#fefefeff"
+            
+            style={{ paddingVertical: 10, 
+               
+                   borderWidth: 1,
+                  borderRadius: 8,
+                alignSelf: "center", }}
+          />
+        </Animated.View>
 
         {/* Instructions */}
         <ThemedText type="subtitle" style={styles.sectionTitle}>
