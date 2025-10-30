@@ -2,12 +2,13 @@ import { Tabs } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { HapticTab } from "../../components/haptic-tab";
 import { useThemeColor } from "../../hooks/use-theme-color";
+import { IconSymbol } from "../../components/ui/icon-symbol";
 
 export default function TabLayout() {
   const tintColor = useThemeColor({}, "tint");
   const textColor = useThemeColor({}, "text");
   const background = useThemeColor({}, "background");
-  const headerBg = "#CC5500"; // change to any color or use `background`
+  const headerBg = "#014867ff"; // change to any color or use `background`
 
   return (
     <Tabs
@@ -36,7 +37,7 @@ export default function TabLayout() {
         options={{
           title: "Favorites",
           tabBarIcon: ({ color, focused }) => (
-            <Ionicons name={focused ? "heart" : "heart-outline"} size={24} color={color} />
+            <IconSymbol name="heart.fill" size={24} color={color} />
           ),
         }}
       />
