@@ -12,6 +12,7 @@ export default function RecipeDetail() {
 
   const [recipe, setRecipe] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [rating, setRating] = useState<number>(0);
 
   useEffect(() => {
     if (!id) {
@@ -37,6 +38,39 @@ export default function RecipeDetail() {
 
     fetchRecipe();
   }, [id]);
+
+  const getYouTubeEmbedUrl = (url: string): string => {
+    try {
+      if (url.includes("youtube.com/watch?v=")) {
+        const videoId = url.split("watch?v=")[1].split("&")[0];
+        return `https://www.youtube.com/embed/${videoId}`;
+      } else if (url.includes("youtu.be/")) {
+        const videoId = url.split("youtu.be/")[1].split("?")[0];
+        return `https://www.youtube.com/embed/${videoId}`;
+      }
+    } catch (error) {
+      console.warn("Invalid YouTube URL:", url);
+    }
+    return url;
+  };
+
+  const handleRatingCompleted = async (value: number) => {
+    setRating(value);
+    const { error } = await supabase
+      .from("receipes")
+      .update({ rating: value })
+      .eq("id", id);
+
+    if (error) console.error("Error updating rating:", error);
+
+    if (value === 5) {
+      scale.value = withSequence(
+        withSpring(1.2, { damping: 2, stiffness: 100 }),
+        withSpring(1, { damping: 2, stiffness: 100 })
+      );
+      Alert.alert("Thank you!", "You gave this recipe a perfect 5-star rating!");
+    }
+  };
 
   if (loading) {
     return (

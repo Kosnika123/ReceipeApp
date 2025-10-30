@@ -2,6 +2,7 @@ import { Tabs } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { HapticTab } from "../../components/haptic-tab";
 import { useThemeColor } from "../../hooks/use-theme-color";
+import { IconSymbol } from "../../components/ui/icon-symbol";
 
 export default function TabLayout() {
   const tintColor = useThemeColor({}, "tint");
