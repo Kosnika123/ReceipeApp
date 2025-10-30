@@ -7,19 +7,18 @@ export default function TabLayout() {
   const tintColor = useThemeColor({}, "tint");
   const textColor = useThemeColor({}, "text");
   const background = useThemeColor({}, "background");
-  const headerBg = "#CC5500"; // change to any color or use `background`
+  const headerBg = "#CC5500";
 
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: "Orange",
+        tabBarActiveTintColor: "orange",
         tabBarInactiveTintColor: "white",
         tabBarStyle: { backgroundColor: headerBg },
-        headerShown: true, // remove the top title/header bar
-        // headerShown: true,
+        headerShown: true,
         headerStyle: { backgroundColor: headerBg },
-        // headerTintColor: "#fff", // title/icon color
-        tabBarButton: HapticTab,
+        headerTintColor: "#fff",
+        tabBarButton: (props) => <HapticTab {...props} />,
       }}
     >
       <Tabs.Screen
@@ -27,7 +26,11 @@ export default function TabLayout() {
         options={{
           title: "Home",
           tabBarIcon: ({ color, focused }) => (
-            <Ionicons name={focused ? "home" : "home-outline"} size={24} color={color} />
+            <Ionicons
+              name={focused ? "home" : "home-outline"}
+              size={24}
+              color={color}
+            />
           ),
         }}
       />
@@ -36,11 +39,28 @@ export default function TabLayout() {
         options={{
           title: "Favorites",
           tabBarIcon: ({ color, focused }) => (
-            <Ionicons name={focused ? "heart" : "heart-outline"} size={24} color={color} />
+            <Ionicons
+              name={focused ? "heart" : "heart-outline"}
+              size={24}
+              color={color}
+            />
           ),
         }}
       />
       <Tabs.Screen
+        name="new"
+        options={{
+          title: "New",
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons
+              name={focused ? "add" : "add-outline"}
+              size={24}
+              color={color}
+            />
+          ),
+        }}
+      />
+        <Tabs.Screen
         name="explore"
         options={{
           title: "Explore",

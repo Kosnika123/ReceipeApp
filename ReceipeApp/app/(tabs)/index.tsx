@@ -309,16 +309,29 @@ const uniqueCategories = Array.from(
         ) : (
           <View style={styles.grid}>
             {filteredRecipes.map((item) => (
-              <TouchableOpacity
+                <TouchableOpacity
                 key={item.id}
                 style={styles.card}
-                onPress={() => router.push(`/recipe/${item.id}` as any)}
-              >
-                <Image source={{ uri: item.image_url }} style={styles.cardImage} />
+                onPress={() =>
+                  router.push({
+                  pathname: `/recipe/[id]`,
+                  params: {
+                    id: item.id,       // <-- this is required
+                    source: "supabase",
+                    title: item.title,
+                    description: item.description,
+                    ingredients: item.ingredients,
+                    steps: item.steps,
+                    imageUrl: item.imageurl,
+                  },
+                  })
+                }
+                >
+                <Image source={{ uri: item.imageurl }} style={styles.cardImage} />
                 <ThemedText style={styles.cardTitle} numberOfLines={2}>
                   {item.title}
                 </ThemedText>
-              </TouchableOpacity>
+                </TouchableOpacity>
             ))}
           </View>
         )}
