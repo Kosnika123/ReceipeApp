@@ -54,6 +54,7 @@ export default function HomeScreen() {
     "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=800&h=400",
     "https://images.unsplash.com/photo-1509722747041-616f39b57569?w=800&h=400",
     "https://images.unsplash.com/photo-1484723091739-30a097e8f929?w=800&h=400",
+    "https://unsplash.com/photos/cooked-food-awj7sRviVXo"
   ];
 
   // Fetch recipes from Supabase
@@ -236,7 +237,6 @@ const uniqueCategories = Array.from(
       {/* Header */}
       <ThemedView style={styles.header}>
         <ThemedText style={styles.title}>Food Recipes</ThemedText>
-        <Ionicons name="settings-outline" size={24} color={textColor} />
       </ThemedView>
 
       <ThemedText style={styles.subtitle}>

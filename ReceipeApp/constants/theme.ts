@@ -18,12 +18,14 @@ export const Colors = {
     tabIconSelected: tintColorLight,
   },
   dark: {
-    text: '#000000ff',
-    background: '#FCEEDC',
+    text: '#FFFFFF',
+    background: '#000000',
     tint: tintColorDark,
     icon: '#9BA1A6',
     tabIconDefault: '#9BA1A6',
     tabIconSelected: tintColorDark,
+     selectedCategoryText: { color: "#000000ff" },
+      categoryText: { fontSize: 14, color: "#fff" },
   },
 };
 

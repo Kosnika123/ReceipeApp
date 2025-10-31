@@ -1,12 +1,9 @@
 import { Tabs } from "expo-router";
 import { HapticTab } from "../../components/haptic-tab";
 import { useThemeColor } from "../../hooks/use-theme-color";
-import { IconSymbol } from "../../components/ui/icon-symbol";
+import { Ionicons } from "@expo/vector-icons";
 
 export default function TabLayout() {
-  const tintColor = useThemeColor({}, "tint");
-  const textColor = useThemeColor({}, "text");
-  const background = useThemeColor({}, "background");
   const headerBg = "#0f6ae1ff";
 
   return (
@@ -25,35 +22,35 @@ export default function TabLayout() {
         name="index"
         options={{
           title: "Home",
-          tabBarIcon: ({ color }) => (
-            <IconSymbol name="house.fill" size={24} color={color} />
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="home" size={size} color={color} />
           ),
         }}
       />
       <Tabs.Screen
-        name="favorites"
+        name="favourite"
         options={{
           title: "Favorites",
-          tabBarIcon: ({ color }) => (
-            <IconSymbol name="heart.fill" size={24} color={color} />
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="heart" size={size} color={color} />
           ),
         }}
       />
-      <Tabs.Screen
-        name="new"
+      {/* <Tabs.Screen
+        name="New"
         options={{
           title: "New",
-          tabBarIcon: ({ color }) => (
-            <IconSymbol name="plus" size={24} color={color} />
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="add-circle-outline" size={size} color={color} />
           ),
         }}
-      />
-        <Tabs.Screen
+      /> */}
+      <Tabs.Screen
         name="explore"
         options={{
           title: "Explore",
-          tabBarIcon: ({ color }) => (
-            <IconSymbol name="magnifyingglass" size={24} color={color} />
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="search" size={size} color={color} />
           ),
         }}
       />
