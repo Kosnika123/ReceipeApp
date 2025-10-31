@@ -8,12 +8,12 @@ export default function TabLayout() {
   const tintColor = useThemeColor({}, "tint");
   const textColor = useThemeColor({}, "text");
   const background = useThemeColor({}, "background");
-  const headerBg = "#CC5500";
+  const headerBg = "#0f6ae1ff";
 
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: "orange",
+        tabBarActiveTintColor: "black",
         tabBarInactiveTintColor: "white",
         tabBarStyle: { backgroundColor: headerBg },
         headerShown: true,
