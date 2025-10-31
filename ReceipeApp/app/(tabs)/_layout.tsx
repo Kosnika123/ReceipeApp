@@ -1,5 +1,4 @@
 import { Tabs } from "expo-router";
-import { Ionicons } from "@expo/vector-icons";
 import { HapticTab } from "../../components/haptic-tab";
 import { useThemeColor } from "../../hooks/use-theme-color";
 import { IconSymbol } from "../../components/ui/icon-symbol";
@@ -26,12 +25,8 @@ export default function TabLayout() {
         name="index"
         options={{
           title: "Home",
-          tabBarIcon: ({ color, focused }) => (
-            <Ionicons
-              name={focused ? "home" : "home-outline"}
-              size={24}
-              color={color}
-            />
+          tabBarIcon: ({ color }) => (
+            <IconSymbol name="house.fill" size={24} color={color} />
           ),
         }}
       />
@@ -39,12 +34,8 @@ export default function TabLayout() {
         name="favorites"
         options={{
           title: "Favorites",
-          tabBarIcon: ({ color, focused }) => (
-            <Ionicons
-              name={focused ? "heart" : "heart-outline"}
-              size={24}
-              color={color}
-            />
+          tabBarIcon: ({ color }) => (
+            <IconSymbol name="heart.fill" size={24} color={color} />
           ),
         }}
       />
@@ -52,12 +43,8 @@ export default function TabLayout() {
         name="new"
         options={{
           title: "New",
-          tabBarIcon: ({ color, focused }) => (
-            <Ionicons
-              name={focused ? "add" : "add-outline"}
-              size={24}
-              color={color}
-            />
+          tabBarIcon: ({ color }) => (
+            <IconSymbol name="plus" size={24} color={color} />
           ),
         }}
       />
@@ -65,8 +52,8 @@ export default function TabLayout() {
         name="explore"
         options={{
           title: "Explore",
-          tabBarIcon: ({ color, focused }) => (
-            <Ionicons name={focused ? "search" : "search-outline"} size={24} color={color} />
+          tabBarIcon: ({ color }) => (
+            <IconSymbol name="magnifyingglass" size={24} color={color} />
           ),
         }}
       />

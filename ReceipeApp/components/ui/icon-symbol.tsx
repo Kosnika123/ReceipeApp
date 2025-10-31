@@ -22,6 +22,8 @@ const MAPPING = {
   'fork.knife': 'restaurant',
   'list.bullet': 'list',
   'heart.fill': 'favorite',
+  'plus': 'add',
+  'magnifyingglass': 'search',
 } as IconMapping;
 
 /**

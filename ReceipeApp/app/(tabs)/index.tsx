@@ -42,6 +42,9 @@ export default function HomeScreen() {
   const fadeAnim = new Animated.Value(1);
   // const searchTimeout = useRef<NodeJS.Timeout | null>(null);
   const searchTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [imageSources, setImageSources] = useState<{[key: string]: any}>({});
+
+  const defaultImage = require("../../assets/images/icon.png"); // Default image fallback
 
   const backgroundColor = useThemeColor({}, "background");
   const textColor = useThemeColor({}, "text");
@@ -327,7 +330,14 @@ const uniqueCategories = Array.from(
                   })
                 }
                 >
-                <Image source={{ uri: item.imageurl }} style={styles.cardImage} />
+                <Image
+                  source={imageSources[item.id] || { uri: item.image_url }}
+                  style={styles.cardImage}
+                  onError={() => {
+                    // Fallback to default image if loading fails
+                    setImageSources(prev => ({ ...prev, [item.id]: defaultImage }));
+                  }}
+                />
                 <ThemedText style={styles.cardTitle} numberOfLines={2}>
                   {item.title}
                 </ThemedText>
